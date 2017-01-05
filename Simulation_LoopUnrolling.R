@@ -1,4 +1,4 @@
-setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/Rsim/RSimUsingSPH")
+setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/CommonEnvelopeSPH")
 
 initPositions <- function(x, numParticles, numStars, starRadius, centers)
 {
@@ -236,12 +236,57 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
       
       #(10*j)+5
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+1,2:(dimensions+1)]
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+5,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+1, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+1, 1]/(rho[(10*j)+1, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[(10*j)+5, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+5, 1]/(rho[(10*j)+5, 1])^2)*gradKernel(uij, h, dimensions)
       
       accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+1,] <- accel[(10*j)+1,] - p_a
+      accel[(10*j)+5,] <- accel[(10*j)+5,] - p_a
+      
+      #(10*j)+6
+      #"calculate vector between two particles"
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+6,2:(dimensions+1)]
+      #"calculate acceleration due to pressure"
+      p_a = (-m[(10*j)+6, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+6, 1]/(rho[(10*j)+6, 1])^2)*gradKernel(uij, h, dimensions)
+      
+      accel[i,] <- accel[i,] + p_a
+      accel[(10*j)+6,] <- accel[(10*j)+6,] - p_a
+      
+      #(10*j)+7
+      #"calculate vector between two particles"
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+7,2:(dimensions+1)]
+      #"calculate acceleration due to pressure"
+      p_a = (-m[(10*j)+7, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+7, 1]/(rho[(10*j)+7, 1])^2)*gradKernel(uij, h, dimensions)
+      
+      accel[i,] <- accel[i,] + p_a
+      accel[(10*j)+7,] <- accel[(10*j)+7,] - p_a
+      
+      #(10*j)+8
+      #"calculate vector between two particles"
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+8,2:(dimensions+1)]
+      #"calculate acceleration due to pressure"
+      p_a = (-m[(10*j)+8, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+8, 1]/(rho[(10*j)+8, 1])^2)*gradKernel(uij, h, dimensions)
+      
+      accel[i,] <- accel[i,] + p_a
+      accel[(10*j)+8,] <- accel[(10*j)+8,] - p_a
+      
+      #(10*j)+9
+      #"calculate vector between two particles"
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+9,2:(dimensions+1)]
+      #"calculate acceleration due to pressure"
+      p_a = (-m[(10*j)+9, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+9, 1]/(rho[(10*j)+9, 1])^2)*gradKernel(uij, h, dimensions)
+      
+      accel[i,] <- accel[i,] + p_a
+      accel[(10*j)+9,] <- accel[(10*j)+9,] - p_a
+      
+      #(10*j)+10
+      #"calculate vector between two particles"
+      uij = x[i,2:(dimensions+1)] - x[(10*j)+10,2:(dimensions+1)]
+      #"calculate acceleration due to pressure"
+      p_a = (-m[(10*j)+10, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+10, 1]/(rho[(10*j)+10, 1])^2)*gradKernel(uij, h, dimensions)
+      
+      accel[i,] <- accel[i,] + p_a
+      accel[(10*j)+10,] <- accel[(10*j)+10,] - p_a
     }  
   }
 
