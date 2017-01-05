@@ -1,0 +1,72 @@
+[1] "Done at 2016-12-26 21:50:15"
+$by.self
+                           self.time self.pct total.time total.pct
+Simulation_NoChanges.R#183    604.86    25.59     604.86     25.59
+Simulation_NoChanges.R#188    534.18    22.60     534.18     22.60
+Simulation_NoChanges.R#187    532.02    22.51     532.02     22.51
+Simulation_NoChanges.R#113    441.50    18.68     441.50     18.68
+Simulation_NoChanges.R#185    115.50     4.89     670.48     28.37
+Simulation_NoChanges.R#114     70.08     2.97      70.08      2.97
+Simulation_NoChanges.R#130     19.46     0.82      19.46      0.82
+Simulation_NoChanges.R#174     19.32     0.82      19.32      0.82
+Simulation_NoChanges.R#117     12.88     0.54      12.88      0.54
+Simulation_NoChanges.R#126      4.16     0.18       4.16      0.18
+Simulation_NoChanges.R#106      3.06     0.13       3.06      0.13
+Simulation_NoChanges.R#124      2.50     0.11       2.50      0.11
+NA#line                         2.00     0.08       2.00      0.08
+Simulation_NoChanges.R#119      0.66     0.03       0.66      0.03
+Simulation_NoChanges.R#180      0.58     0.02       0.58      0.02
+Simulation_NoChanges.R#104      0.44     0.02       0.44      0.02
+Simulation_NoChanges.R#134      0.24     0.01       0.24      0.01
+
+$by.total
+                           total.time total.pct self.time self.pct
+Simulation_NoChanges.R#279    2361.44     99.92      0.00     0.00
+Simulation_NoChanges.R#185     670.48     28.37    115.50     4.89
+Simulation_NoChanges.R#183     604.86     25.59    604.86    25.59
+Simulation_NoChanges.R#188     534.18     22.60    534.18    22.60
+Simulation_NoChanges.R#187     532.02     22.51    532.02    22.51
+Simulation_NoChanges.R#113     441.50     18.68    441.50    18.68
+Simulation_NoChanges.R#114      70.08      2.97     70.08     2.97
+Simulation_NoChanges.R#130      19.46      0.82     19.46     0.82
+Simulation_NoChanges.R#174      19.32      0.82     19.32     0.82
+Simulation_NoChanges.R#117      12.88      0.54     12.88     0.54
+Simulation_NoChanges.R#126       4.16      0.18      4.16     0.18
+Simulation_NoChanges.R#106       3.06      0.13      3.06     0.13
+Simulation_NoChanges.R#124       2.50      0.11      2.50     0.11
+NA#line                          2.00      0.08      2.00     0.08
+NA#profiling:                    2.00      0.08      0.00     0.00
+NA#sample.interval=20000         2.00      0.08      0.00     0.00
+Simulation_NoChanges.R#119       0.66      0.03      0.66     0.03
+Simulation_NoChanges.R#180       0.58      0.02      0.58     0.02
+Simulation_NoChanges.R#104       0.44      0.02      0.44     0.02
+Simulation_NoChanges.R#134       0.24      0.01      0.24     0.01
+
+$by.line
+                           self.time self.pct total.time total.pct
+NA#line                         2.00     0.08       2.00      0.08
+NA#profiling:                   0.00     0.00       2.00      0.08
+NA#sample.interval=20000        0.00     0.00       2.00      0.08
+Simulation_NoChanges.R#104      0.44     0.02       0.44      0.02
+Simulation_NoChanges.R#106      3.06     0.13       3.06      0.13
+Simulation_NoChanges.R#113    441.50    18.68     441.50     18.68
+Simulation_NoChanges.R#114     70.08     2.97      70.08      2.97
+Simulation_NoChanges.R#117     12.88     0.54      12.88      0.54
+Simulation_NoChanges.R#119      0.66     0.03       0.66      0.03
+Simulation_NoChanges.R#124      2.50     0.11       2.50      0.11
+Simulation_NoChanges.R#126      4.16     0.18       4.16      0.18
+Simulation_NoChanges.R#130     19.46     0.82      19.46      0.82
+Simulation_NoChanges.R#134      0.24     0.01       0.24      0.01
+Simulation_NoChanges.R#174     19.32     0.82      19.32      0.82
+Simulation_NoChanges.R#180      0.58     0.02       0.58      0.02
+Simulation_NoChanges.R#183    604.86    25.59     604.86     25.59
+Simulation_NoChanges.R#185    115.50     4.89     670.48     28.37
+Simulation_NoChanges.R#187    532.02    22.51     532.02     22.51
+Simulation_NoChanges.R#188    534.18    22.60     534.18     22.60
+Simulation_NoChanges.R#279      0.00     0.00    2361.44     99.92
+
+$sample.interval
+[1] 0.02
+
+$sampling.time
+[1] 2363.44
