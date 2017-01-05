@@ -1,4 +1,6 @@
 setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/Rsim/RSimUsingSPH")
+#library("GUIProfiler")
+library("profvis")
 
 initPositions <- function(x, numParticles, numStars, starRadius, centers)
 {
@@ -165,6 +167,7 @@ calculate_density <- function(x, m, h, rho, numParticles, dimensions)
 
 calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numParticles, dimensions)
 {
+  #RRprofStart(filename="GUIProfiling_Accel.txt")
   #"add damping and gravity"
   accel <- data.frame(xAccel=rep(0, numParticles),
                       yAccel=rep(0, numParticles)) 
@@ -188,12 +191,19 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
       uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
 
+      #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE, append = TRUE)
+      #RRprofStart(filename="GUIProfiling_Gradkernel.txt")
       p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
 
+      #Rprof(NULL)
       accel[i,] <- accel[i,] + p_a
       accel[j,] <- accel[j,] - p_a
+      #RRprofStop()
+      
     }
   }
+  
+  #RRprofStop()
   
   return(accel)
 }
@@ -261,30 +271,50 @@ main <- function(){
   png(file = './OutputPlots/_Start.png')
   plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
   dev.off()
+
+  #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE)
+  #print("Strating profiling")
+  #Rprof(NULL)
   
   print("Starting main loop")
   
+  #RRprofStart(filename="GUIProfiling_Density.txt")
+  print("Strating profiling")
+  #RRprofStop()
   
- 
-  for(i in 1:maxTimeSetps)
-  {
-	v_phalf = v_mhalf + (accel * timeStep)
-	x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
-	v = .5 * (v_mhalf + v_phalf)
-	v_mhalf = v_phalf
-
-	#"update densities, pressures, accelerations"
-	rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
-	P = presureConstant * rho^(1+1/PolyIndex)
-	#("Starting accel calc")
-	accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
-
-	png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
-	plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
-	dev.off()
+  #RRprofStart(filename="GUIProfiling_GradKernel.txt")
+  #for(i in 1:maxTimeSetps)
+  profillingOutput <- profvis({
+    for(i in 1:profilingTimeSteps)
+    {
+      v_phalf = v_mhalf + (accel * timeStep)
+      x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
+      v = .5 * (v_mhalf + v_phalf)
+      v_mhalf = v_phalf
+    
+      #"update densities, pressures, accelerations"
+     #print("Starting rho calc")
+     # RRprofStart(filename="GUIProfiling_Density.txt")
+      rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
+      #RRprofStop()
+      #print("Starting p calc")
+      P = presureConstant * rho^(1+1/PolyIndex)
+      #("Starting accel calc")
+      accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
+      
+      #print("Starting save plot")
+      png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
+      plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
+      dev.off()
+      
+      print(paste("Done loop", i, "at",Sys.time(), sep=" "))
+    }
+  })
   
-	print(paste("Done loop", i, "at",Sys.time(), sep=" "))
-  }
-
+  #RRprofStop()
   print(paste("Done at", Sys.time()))
+  print(profillingOutput)
+  #RRprofReport(file.name = "GUIProfiling_Density.txt", reportname="GUIProfiling_Density.html")
+  #summaryRprof("Profiling_GradKernel.txt", lines="show")
+  
 }
