@@ -1,0 +1,15 @@
+numParticles <-c(100, 50)
+  totalParticles <- sum(numParticles)
+  dimensions<- 2
+  numStars <- 2
+  starMass <- c(2,2)
+  starRadius <- c(0.75,0.25)
+  smoothingLength <- .04/sqrt(totalParticles/1000) #orginal .04/sqrt(numParticles/1000)
+  timeStep <- .04
+  damping <- 1
+  presureConstant <- 0.1
+  PolyIndex <- 1
+  maxTimeSetps <- 50
+  
+  centers <- data.frame(x = c(-.75, 1.25 ),
+                        y = c(-.75, 1.25))

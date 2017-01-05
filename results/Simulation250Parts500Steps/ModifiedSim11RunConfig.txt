@@ -1,0 +1,16 @@
+ #simulation Paramters
+  numParticles = c(200, 50)
+  totalParticles = sum(numParticles)
+  dimensions= 2
+  numStars = 2
+  starMass = c(1.6, .4)
+  starRadius = c(0.75,0.75)
+  smoothingLength = .04/sqrt(totalParticles/1000) #orginal .04/sqrt(numParticles/1000)
+  timeStep = .04
+  damping = 1
+  presureConstant = 0.1
+  PolyIndex = 1
+  maxTimeSetps <- 500
+  
+  centers = data.frame(x = c(0, 2),
+                        y = c(0, 0))
