@@ -1,6 +1,5 @@
 setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/Rsim/RSimUsingSPH")
-#library("GUIProfiler")
-library("profvis")
+library("GUIProfiler")
 
 initPositions <- function(x, numParticles, numStars, starRadius, centers)
 {
@@ -107,40 +106,41 @@ kernel <- function(position, smoothingLength, dimensions)
 
 gradKernel <- function(position, smoothingLength,dimensions)
 {
-  ch <- switch(
-    dimensions,
-    1/(6* smoothingLength),
-    5/(14 * pi * smoothingLength^2),
-    1/(4 * pi * smoothingLength^3)
-  )
+  return(1)
+#  ch <- switch(
+#    dimensions,
+#    1/(6* smoothingLength),
+#    5/(14 * pi * smoothingLength^2),
+#    1/(4 * pi * smoothingLength^3)
+#  )
   
-  unitR <- position / (sqrt(sum(position^2)))
-  q<-(sqrt(sum(position^2)))/smoothingLength
+#  unitR <- position / (sqrt(sum(position^2)))
+#  q<-(sqrt(sum(position^2)))/smoothingLength
   
   #Stops program if ch is null (ie not assigned by switch)
-  if(is.null(ch))
-  {
-    print("null")
-  }
-  stopifnot(!is.null(ch)) #need to look up a better way to stop execution
+#  if(is.null(ch))
+#  {
+#    print("null")
+#  }
+#  stopifnot(!is.null(ch)) #need to look up a better way to stop execution
   
-  if(is.na(q))
-  {
-    return(0)
-  }
+#  if(is.na(q))
+#  {
+#    return(0)
+#  }
 
-  if(q >= 0 && q < 1)
-  {
-    return (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR)
-  } 
-  else if(q >= 1 && q < 2)
-  {
-    return (ch * (1/smoothingLength) * (-3*(2 - q)^2) * unitR)
-  }
-  else if(q >= 2)
-  {
-    return(0)
-  }
+#  if(q >= 0 && q < 1)
+#  {
+#    return (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR)
+#  } 
+#  else if(q >= 1 && q < 2)
+#  {
+#    return (ch * (1/smoothingLength) * (-3*(2 - q)^2) * unitR)
+#  }
+#  else if(q >= 2)
+#  {
+#    return(0)
+#  }
 }
 
 #sudocode implemtation
@@ -223,7 +223,7 @@ main <- function(){
   presureConstant = 0.1
   PolyIndex = 1
   maxTimeSetps <- 250
-  profilingTimeSteps <- 10
+  profilingTimeSteps <- 100
   
   centers = data.frame(x = c(0, 2),
                        y = c(0, 0))
@@ -278,43 +278,30 @@ main <- function(){
   
   print("Starting main loop")
   
-  #RRprofStart(filename="GUIProfiling_Density.txt")
   print("Strating profiling")
-  #RRprofStop()
   
-  #RRprofStart(filename="GUIProfiling_GradKernel.txt")
+  RRprofStart(filename="GUIProfiling_SimpleGradKernel.txt")
   #for(i in 1:maxTimeSetps)
-  profillingOutput <- profvis({
-    for(i in 1:profilingTimeSteps)
-    {
-      v_phalf = v_mhalf + (accel * timeStep)
-      x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
-      v = .5 * (v_mhalf + v_phalf)
-      v_mhalf = v_phalf
+  for(i in 1:profilingTimeSteps)
+  {
+    v_phalf = v_mhalf + (accel * timeStep)
+    x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
+    v = .5 * (v_mhalf + v_phalf)
+    v_mhalf = v_phalf
+  
+    #"update densities, pressures, accelerations"
+    rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
+    P = presureConstant * rho^(1+1/PolyIndex)
+    accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
     
-      #"update densities, pressures, accelerations"
-     #print("Starting rho calc")
-     # RRprofStart(filename="GUIProfiling_Density.txt")
-      rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
-      #RRprofStop()
-      #print("Starting p calc")
-      P = presureConstant * rho^(1+1/PolyIndex)
-      #("Starting accel calc")
-      accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
-      
-      #print("Starting save plot")
-      png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
-      plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
-      dev.off()
-      
-      print(paste("Done loop", i, "at",Sys.time(), sep=" "))
-    }
-  })
+    png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
+    plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
+    dev.off()
+    
+    print(paste("Done loop", i, "at",Sys.time(), sep=" "))
+  }
+  RRprofStop()
   
-  #RRprofStop()
   print(paste("Done at", Sys.time()))
-  print(profillingOutput)
-  #RRprofReport(file.name = "GUIProfiling_Density.txt", reportname="GUIProfiling_Density.html")
-  #summaryRprof("Profiling_GradKernel.txt", lines="show")
-  
+  RRprofReport(file.name = "GUIProfiling_SimpleGradKernel.txt", reportname="GUIProfiling_SimpleGradKernel.html")
 }
