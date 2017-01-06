@@ -1,6 +1,4 @@
-setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/Rsim/RSimUsingSPH")
-#library("GUIProfiler")
-library("profvis")
+setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/CommonEnvelopeSPH")
 
 initPositions <- function(x, numParticles, numStars, starRadius, centers)
 {
@@ -167,7 +165,6 @@ calculate_density <- function(x, m, h, rho, numParticles, dimensions)
 
 calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numParticles, dimensions)
 {
-  #RRprofStart(filename="GUIProfiling_Accel.txt")
   #"add damping and gravity"
   accel <- data.frame(xAccel=rep(0, numParticles),
                       yAccel=rep(0, numParticles)) 
@@ -176,7 +173,6 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
     accel$zAccel <- rep(0, numParticles)
   }
   
-  #not completly sure why it needs to be -1 but it ends up as a 101 row matrix and caues issues
   for(i in 1:numParticles)
   {
     accel[i, 1:dimensions] <-  -nu * v[i, 1:dimensions] - lambda[x[i, 1]] * x[i, 2:(dimensions+1)]
@@ -190,16 +186,11 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
       #"calculate vector between two particles"
       uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-
-      #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE, append = TRUE)
-      #RRprofStart(filename="GUIProfiling_Gradkernel.txt")
       p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
 
       #Rprof(NULL)
       accel[i,] <- accel[i,] + p_a
       accel[j,] <- accel[j,] - p_a
-      #RRprofStop()
-      
     }
   }
   
@@ -223,6 +214,7 @@ main <- function(){
   presureConstant = 0.1
   PolyIndex = 1
   maxTimeSetps <- 250
+  testingTimeSteps <- 150
   profilingTimeSteps <- 10
   
   centers = data.frame(x = c(0, 2),
@@ -264,57 +256,32 @@ main <- function(){
   x = initPositions(x, numParticles,numStars, starRadius, centers)
   m = initMasses(m, numParticles, numStars, starMass)
   lambda = initLambda(lambda, numStars, starMass,  starRadius, presureConstant , PolyIndex)
-
   
   print(paste("Done initlizing particle positions at", Sys.time()))
   
   png(file = './OutputPlots/_Start.png')
   plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
   dev.off()
-
-  #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE)
-  #print("Strating profiling")
-  #Rprof(NULL)
   
   print("Starting main loop")
+
+  for(i in 1:testingTimeSteps)
+  {
+    v_phalf = v_mhalf + (accel * timeStep)
+    x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
+    v = .5 * (v_mhalf + v_phalf)
+    v_mhalf = v_phalf
   
-  #RRprofStart(filename="GUIProfiling_Density.txt")
-  print("Strating profiling")
-  #RRprofStop()
-  
-  #RRprofStart(filename="GUIProfiling_GradKernel.txt")
-  #for(i in 1:maxTimeSetps)
-  profillingOutput <- profvis({
-    for(i in 1:profilingTimeSteps)
-    {
-      v_phalf = v_mhalf + (accel * timeStep)
-      x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
-      v = .5 * (v_mhalf + v_phalf)
-      v_mhalf = v_phalf
+    #"update densities, pressures, accelerations"
+    rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
+    P = presureConstant * rho^(1+1/PolyIndex)
+    accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
+
+    png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
+    plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
+    dev.off()
     
-      #"update densities, pressures, accelerations"
-     #print("Starting rho calc")
-     # RRprofStart(filename="GUIProfiling_Density.txt")
-      rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
-      #RRprofStop()
-      #print("Starting p calc")
-      P = presureConstant * rho^(1+1/PolyIndex)
-      #("Starting accel calc")
-      accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
-      
-      #print("Starting save plot")
-      png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
-      plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
-      dev.off()
-      
-      print(paste("Done loop", i, "at",Sys.time(), sep=" "))
-    }
-  })
-  
-  #RRprofStop()
+    print(paste("Done loop", i, "at",Sys.time(), sep=" "))
+  }
   print(paste("Done at", Sys.time()))
-  print(profillingOutput)
-  #RRprofReport(file.name = "GUIProfiling_Density.txt", reportname="GUIProfiling_Density.html")
-  #summaryRprof("Profiling_GradKernel.txt", lines="show")
-  
 }

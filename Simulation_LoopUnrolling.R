@@ -144,20 +144,163 @@ gradKernel <- function(position, smoothingLength,dimensions)
 #sudocode implemtation
 calculate_density <- function(x, m, h, rho, numParticles, dimensions)
 {
-  for(i in 1:(numParticles-1)){
+  for(i in 1:(numParticles-1))
+  {
+
+    i1 =((10*i)+1)
     #"initialize density with i = j contribution"
-    rho[i, 1] <- m[i, 2] * kernel(0, h, dimensions)
-    
-    for(j in (i+1):numParticles)
+    rho[i1, 1] <- m[i1, 2] * kernel(0, h, dimensions)
+    for(j in (i1+1):numParticles)
     {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
-      rho_ij = m[i, 2] * kernel(uij, h, dimensions)
+      uij = x[i1,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i1, 2] * kernel(uij, h, dimensions)
       
       #"add contribution to density"
-      rho[i, 1] <- rho[i, 1] + rho_ij 
+      rho[i1, 1] <- rho[i1, 1] + rho_ij 
       rho[j, 1] <- rho[j, 1] + rho_ij
     }
+    
+    i2 =((10*i)+2)
+    #"initialize density with i = j contribution"
+    rho[i2, 1] <- m[i2, 2] * kernel(0, h, dimensions)
+    for(j in (i2+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i2,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i2, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i2, 1] <- rho[i2, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i3 =((10*i)+3)
+    #"initialize density with i = j contribution"
+    rho[i3, 1] <- m[i3, 2] * kernel(0, h, dimensions)
+    for(j in (i3+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i3,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i3, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i3, 1] <- rho[i3, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i4 =((10*i)+4)
+    #"initialize density with i = j contribution"
+    rho[i4, 1] <- m[i4, 2] * kernel(0, h, dimensions)
+    for(j in (i4+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i4,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i4, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i4, 1] <- rho[i4, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i5 =((10*i)+5)
+    #"initialize density with i = j contribution"
+    rho[i5, 1] <- m[i5, 2] * kernel(0, h, dimensions)
+    for(j in (i5+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i5,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i5, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i5, 1] <- rho[i5, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i6 =((10*i)+6)
+    #"initialize density with i = j contribution"
+    rho[i6, 1] <- m[i6, 2] * kernel(0, h, dimensions)
+    for(j in (i6+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i6,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i6, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i6, 1] <- rho[i6, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i7 =((10*i)+7)
+    #"initialize density with i = j contribution"
+    rho[i7, 1] <- m[i7, 2] * kernel(0, h, dimensions)
+    for(j in (i7+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i7,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i7, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i7, 1] <- rho[i7, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i8 =((10*i)+8)
+    #"initialize density with i = j contribution"
+    rho[i8, 1] <- m[i8, 2] * kernel(0, h, dimensions)
+    for(j in (i8 +1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i8,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i8, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i8, 1] <- rho[i8, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    i9 =((10*i)+9)
+    #"initialize density with i = j contribution"
+    rho[i9, 1] <- m[i9, 2] * kernel(0, h, dimensions)
+    for(j in (i9+1):numParticles)
+    {
+      #"calculate vector between two particles"
+      uij = x[i9,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      rho_ij = m[i9, 2] * kernel(uij, h, dimensions)
+      
+      #"add contribution to density"
+      rho[i9, 1] <- rho[i9, 1] + rho_ij 
+      rho[j, 1] <- rho[j, 1] + rho_ij
+    }
+    
+    if((10*i)+10 != 150)
+    {
+      i10 =((10*i)+10)
+      #"initialize density with i = j contribution"
+      rho[i10, 1] <- m[i10, 2] * kernel(0, h, dimensions)
+      for(j in (i10+1):numParticles)
+      {
+        #"calculate vector between two particles"
+        uij = x[i10,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+        rho_ij = m[i10, 2] * kernel(uij, h, dimensions)
+        
+        #"add contribution to density"
+        rho[i10, 1] <- rho[i10, 1] + rho_ij 
+        rho[j, 1] <- rho[j, 1] + rho_ij 
+      }
+    }
+    
+    
+    #for(j in (i+1):numParticles)
+    #{
+    #  #"calculate vector between two particles"
+    #  uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+    #  rho_ij = m[i, 2] * kernel(uij, h, dimensions)
+      
+    #  #"add contribution to density"
+    #  rho[i, 1] <- rho[i, 1] + rho_ij 
+    #  rho[j, 1] <- rho[j, 1] + rho_ij
+    #}
   }
   
   return (rho)
@@ -174,120 +317,173 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
   }
   
   #not completly sure why it needs to be -1 but it ends up as a 101 row matrix and caues issues
-  for(i in 1:numParticles)
+  #for(i in 1:numParticles)
+  for(i in 1:14)
   {
-    accel[i, 1:dimensions] <-  -nu * v[i, 1:dimensions] - lambda[x[i, 1]] * x[i, 2:(dimensions+1)]
+    iTenPlace = 10 * i
+    
+    accel[iTenPlace+1, 1:dimensions] <-  -nu * v[iTenPlace+1, 1:dimensions] - lambda[x[iTenPlace+1, 1]] * x[iTenPlace+1, 2:(dimensions+1)]
+    
+    accel[iTenPlace+2, 1:dimensions] <-  -nu * v[iTenPlace+2, 1:dimensions] - lambda[x[iTenPlace+2, 1]] * x[iTenPlace+2, 2:(dimensions+1)]
+    
+    accel[iTenPlace+3, 1:dimensions] <-  -nu * v[iTenPlace+3, 1:dimensions] - lambda[x[iTenPlace+3, 1]] * x[iTenPlace+3, 2:(dimensions+1)]
+    
+    accel[iTenPlace+4, 1:dimensions] <-  -nu * v[iTenPlace+4, 1:dimensions] - lambda[x[iTenPlace+4, 1]] * x[iTenPlace+4, 2:(dimensions+1)]
+    
+    accel[iTenPlace+5, 1:dimensions] <-  -nu * v[iTenPlace+5, 1:dimensions] - lambda[x[iTenPlace+5, 1]] * x[iTenPlace+5, 2:(dimensions+1)]
+    
+    accel[iTenPlace+6, 1:dimensions] <-  -nu * v[iTenPlace+6, 1:dimensions] - lambda[x[iTenPlace+6, 1]] * x[iTenPlace+6, 2:(dimensions+1)]
+  
+    accel[iTenPlace+7, 1:dimensions] <-  -nu * v[iTenPlace+7, 1:dimensions] - lambda[x[iTenPlace+7, 1]] * x[iTenPlace+7, 2:(dimensions+1)]
+    
+    accel[iTenPlace+8, 1:dimensions] <-  -nu * v[iTenPlace+8, 1:dimensions] - lambda[x[iTenPlace+8, 1]] * x[iTenPlace+8, 2:(dimensions+1)]
+    
+    accel[iTenPlace+9, 1:dimensions] <-  -nu * v[iTenPlace+9, 1:dimensions] - lambda[x[iTenPlace+9, 1]] * x[iTenPlace+9, 2:(dimensions+1)]
+    
+    accel[iTenPlace+10, 1:dimensions] <- -nu * v[iTenPlace+10, 1:dimensions] - lambda[x[iTenPlace+10, 1]] * x[iTenPlace+10, 2:(dimensions+1)]
   }
   
   #"add pressure"
-  for(i in 1:(numParticles-1))
+  #for(i in 1:(numParticles-1))
+  for(i in 0:14)  
   {
-   # for(j in (i+1):numParticles)
-   # {
-   #  #"calculate vector between two particles"
-   #  uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
-   #  #"calculate acceleration due to pressure"
-   #  p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
-
-   #  accel[i,] <- accel[i,] + p_a
-   #  accel[j,] <- accel[j,] - p_a
-      
-    #}
-    
-    #This loop will be unroolled by 10, each loop will contain the action of ten loops in the previous for. 
-    #The number of loops in this new loop will need to be adjusted each time the number of particle changes
-    for(j in 0:14)
+    i1 =((10*i)+1)
+    for(j in (i1+1):numParticles)
     {
-      #(10*j)+1
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+1,2:(dimensions+1)]
+      uij = x[i1,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+     
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+1, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+1, 1]/(rho[(10*j)+1, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i1, 1]/(rho[i1, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+1,] <- accel[(10*j)+1,] - p_a
+      #print(paste("i", i1, "j", j, p_a, sep = ":"))
+      #if(j==150|| j ==82 )print(paste("i", i1, "j", j, p_a, sep = ":"))
       
-      #(10*j)+2
+      accel[i1,] <- accel[i1,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i2 =((10*i)+2)
+    for(j in (i2+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+2,2:(dimensions+1)]
+      uij = x[i2,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+2, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+2, 1]/(rho[(10*j)+2, 1])^2)*gradKernel(uij, h, dimensions)
-      
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+2,] <- accel[(10*j)+2,] - p_a
-      
-      #(10*j)+3
+      p_a = (-m[j, 2])*(P[i2, 1]/(rho[i2, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
+
+      accel[i2,] <- accel[i2,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i3 =((10*i)+3)
+    for(j in (i3+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+3,2:(dimensions+1)]
+      uij = x[i3,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+3, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+3, 1]/(rho[(10*j)+3, 1])^2)*gradKernel(uij, h, dimensions)
-      
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+3,] <- accel[(10*j)+3,] - p_a
-      
-      #(10*j)+4
+      p_a = (-m[j, 2])*(P[i3, 1]/(rho[i3, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
+  
+      accel[i3,] <- accel[i3,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i4 =((10*i)+4)
+    for(j in (i4+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+4,2:(dimensions+1)]
+      uij = x[i4,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+4, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+4, 1]/(rho[(10*j)+4, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i4, 1]/(rho[i4, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+4,] <- accel[(10*j)+4,] - p_a
-      
-      #(10*j)+5
+      accel[i4,] <- accel[i4,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i5 =((10*i)+5)
+    for(j in (i5+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+5,2:(dimensions+1)]
+      uij = x[i5,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+5, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+5, 1]/(rho[(10*j)+5, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i5, 1]/(rho[i5, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+5,] <- accel[(10*j)+5,] - p_a
-      
-      #(10*j)+6
+      accel[i5,] <- accel[i5,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i6 =((10*i)+6)
+    for(j in (i6+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+6,2:(dimensions+1)]
+      uij = x[i6,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+6, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+6, 1]/(rho[(10*j)+6, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i6, 1]/(rho[i6, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+6,] <- accel[(10*j)+6,] - p_a
-      
-      #(10*j)+7
+      accel[i6,] <- accel[i6,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i7 =((10*i)+7)
+    for(j in (i7+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+7,2:(dimensions+1)]
+      uij = x[i7,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+7, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+7, 1]/(rho[(10*j)+7, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i7, 1]/(rho[i7, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+7,] <- accel[(10*j)+7,] - p_a
-      
-      #(10*j)+8
+      accel[i7,] <- accel[i7,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i8 =((10*i)+8)
+    for(j in (i8 +1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+8,2:(dimensions+1)]
+      uij = x[i8,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+8, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+8, 1]/(rho[(10*j)+8, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i8, 1]/(rho[i8, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+8,] <- accel[(10*j)+8,] - p_a
-      
-      #(10*j)+9
+      accel[i8,] <- accel[i8,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    i9 =((10*i)+9)
+    for(j in (i9+1):numParticles)
+    {
       #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+9,2:(dimensions+1)]
+      uij = x[i9,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+9, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+9, 1]/(rho[(10*j)+9, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(P[i9, 1]/(rho[i9, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
       
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+9,] <- accel[(10*j)+9,] - p_a
-      
-      #(10*j)+10
-      #"calculate vector between two particles"
-      uij = x[i,2:(dimensions+1)] - x[(10*j)+10,2:(dimensions+1)]
-      #"calculate acceleration due to pressure"
-      p_a = (-m[(10*j)+10, 2])*(P[i, 1]/(rho[i, 1])^2 + P[(10*j)+10, 1]/(rho[(10*j)+10, 1])^2)*gradKernel(uij, h, dimensions)
-      
-      accel[i,] <- accel[i,] + p_a
-      accel[(10*j)+10,] <- accel[(10*j)+10,] - p_a
-    }  
+      accel[i9,] <- accel[i9,] + p_a
+      accel[j,] <- accel[j,] - p_a
+    }
+    
+    if((10*i)+10 != 150)
+    {
+      i10 =((10*i)+10)
+      for(j in (i10+1):numParticles)
+      {
+        #"calculate vector between two particles"
+        uij = x[i10,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+        #"calculate acceleration due to pressure"
+        p_a = (-m[j, 2])*(P[i10, 1]/(rho[i10, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
+        
+        accel[i10,] <- accel[i10,] + p_a
+        accel[j,] <- accel[j,] - p_a
+      }
+    }
+    
+    # for(j in (i+1):numParticles)
+    # {
+    #  #"calculate vector between two particles"
+    #  uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+    #  #"calculate acceleration due to pressure"
+    #  p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
+    
+    #  accel[i,] <- accel[i,] + p_a
+    #  accel[j,] <- accel[j,] - p_a
+    #}
   }
 
   return(accel)
@@ -298,8 +494,6 @@ main <- function(){
   #simulation Paramters
   numParticles = c(120, 30)
   totalParticles = sum(numParticles)
-  unrolledLoopActions = 10
-  unrolledLoopCount =(as.integer(totalParticles/unrolledLoopActions)-1) #-1 becuase loops will start at 0
   dimensions= 2
   numStars = 2
   starMass = c(1.6, .4)
@@ -310,7 +504,7 @@ main <- function(){
   presureConstant = 0.1
   PolyIndex = 1
   maxTimeSetps <- 250
-  testingTimeSteps <- 100
+  testingTimeSteps <- 150
   profilingTimeSteps <- 10
   
   centers = data.frame(x = c(0, 2),
@@ -366,12 +560,12 @@ main <- function(){
     x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
     v = .5 * (v_mhalf + v_phalf)
     v_mhalf = v_phalf
-  
+
     #"update densities, pressures, accelerations"
     rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
     P = presureConstant * rho^(1+1/PolyIndex)
     accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
-
+    
     png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
     plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
     dev.off()
@@ -380,5 +574,4 @@ main <- function(){
   }
 
   print(paste("Done at", Sys.time()))
-  print(profillingOutput)
 }
