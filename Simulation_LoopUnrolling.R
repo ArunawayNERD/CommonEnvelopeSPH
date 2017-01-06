@@ -144,9 +144,8 @@ gradKernel <- function(position, smoothingLength,dimensions)
 #sudocode implemtation
 calculate_density <- function(x, m, h, rho, numParticles, dimensions)
 {
-  for(i in 1:(numParticles-1))
+  for(i in 0:14)
   {
-
     i1 =((10*i)+1)
     #"initialize density with i = j contribution"
     rho[i1, 1] <- m[i1, 2] * kernel(0, h, dimensions)
@@ -155,6 +154,8 @@ calculate_density <- function(x, m, h, rho, numParticles, dimensions)
       #"calculate vector between two particles"
       uij = x[i1,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       rho_ij = m[i1, 2] * kernel(uij, h, dimensions)
+      
+      #print(paste("i", i1, "j", j, rho_ij, sep = ":"))
       
       #"add contribution to density"
       rho[i1, 1] <- rho[i1, 1] + rho_ij 
@@ -318,7 +319,7 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
   
   #not completly sure why it needs to be -1 but it ends up as a 101 row matrix and caues issues
   #for(i in 1:numParticles)
-  for(i in 1:14)
+  for(i in 0:14)
   {
     iTenPlace = 10 * i
     
