@@ -60,6 +60,10 @@ initLambda <- function(lambda, numStars, starMass, starRadius, presureConstant, 
   
   for(i in 1:numStars)
   {
+    print(((2*presureConstant * (pi^(-1/PolyIndex))) *
+             ((starMass[i])*(1+PolyIndex)/((starRadius[i])^2))^(1+(1/PolyIndex)))/
+      starMass[i])
+    
     lambda <- c(lambda,
                 ((2*presureConstant * (pi^(-1/PolyIndex))) *
                    ((starMass[i])*(1+PolyIndex)/((starRadius[i])^2))^(1+(1/PolyIndex)))/
@@ -171,9 +175,9 @@ calculate_density <- function(x, m, h, rho, numParticles, totalParticles, dimens
     for(j in (i+1):totalParticles)
     {
       #"calculate vector between two particles"
-      #uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       
-      uij = distVectorMatrix[i, j, ]
+      #uij = distVectorMatrix[i, j, ]
       print(uij)
       rho_ij = m[i, 2] * kernel(uij, h, ch)
       
@@ -216,8 +220,8 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
     for(j in (i+1):totalParticles)
     {
       #"calculate vector between two particles"
-      #uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
-      uij = distVectorMatrix[1, j]
+      uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      #uij = distVectorMatrix[1, j]
       #"calculate acceleration due to pressure"
       p_a = (-m[j, 2])*(pOverRSquare + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, ch)
 
@@ -237,7 +241,7 @@ main <- function(){
   totalParticles = sum(numParticles)
   dimensions= 2
   numStars = 2
-  starMass = c(1.6, .4)
+  starMass = c(1.5, .5)
   starRadius = c(0.75,0.75)
   smoothingLength = .04/sqrt(totalParticles/1000) #orginal .04/sqrt(numParticles/1000)
   timeStep = .04
@@ -294,7 +298,6 @@ main <- function(){
   x = initPositions(x, numParticles,numStars, starRadius, centers)
   m = initMasses(m, numParticles, numStars, starMass)
   lambda = initLambda(lambda, numStars, starMass,  starRadius, presureConstant , PolyIndex)
-
   
   print(paste("Done initlizing particle positions at", Sys.time()))
   
@@ -305,7 +308,7 @@ main <- function(){
   print("Starting main loop")
 
   #for(i in 1:maxTimeSetps)
-  for(i in 1:profilingTimeSteps)
+  for(i in 1:1)
   {
     v_phalf = v_mhalf + (accel * timeStep)
     x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
@@ -313,10 +316,14 @@ main <- function(){
     v_mhalf = v_phalf
   
     #"update densities, pressures, accelerations"
-    distVectorMatrix = calcDistanceMatrix(x, 10, dimensions)
+    #distVectorMatrix = calcDistanceMatrix(x, 10, dimensions)
 
     rho = calculate_density(x, m, smoothingLength, rho, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
-    P = presureConstant * rho^(1+1/PolyIndex)
+
+    print(rho)
+    print(rho^(1+1/PolyIndex))
+    
+        P = presureConstant * rho^(1+1/PolyIndex)
     accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
     
     png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
