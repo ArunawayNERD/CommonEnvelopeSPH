@@ -1,4 +1,5 @@
 setwd("C:/Users/Johnny/Dropbox/Hood/DeptHonors/Rsim/RSimUsingSPH")
+library("GUIProfiler")
 
 initPositions <- function(x, numParticles, numStars, starRadius, centers)
 {
@@ -105,40 +106,41 @@ kernel <- function(position, smoothingLength, dimensions)
 
 gradKernel <- function(position, smoothingLength,dimensions)
 {
-  ch <- switch(
-    dimensions,
-    1/(6* smoothingLength),
-    5/(14 * pi * smoothingLength^2),
-    1/(4 * pi * smoothingLength^3)
-  )
+  return(1)
+#  ch <- switch(
+#    dimensions,
+#    1/(6* smoothingLength),
+#    5/(14 * pi * smoothingLength^2),
+#    1/(4 * pi * smoothingLength^3)
+#  )
   
-  unitR <- position / (sqrt(sum(position^2)))
-  q<-(sqrt(sum(position^2)))/smoothingLength
+#  unitR <- position / (sqrt(sum(position^2)))
+#  q<-(sqrt(sum(position^2)))/smoothingLength
   
   #Stops program if ch is null (ie not assigned by switch)
-  if(is.null(ch))
-  {
-    print("null")
-  }
-  stopifnot(!is.null(ch)) #need to look up a better way to stop execution
+#  if(is.null(ch))
+#  {
+#    print("null")
+#  }
+#  stopifnot(!is.null(ch)) #need to look up a better way to stop execution
   
-  if(is.na(q))
-  {
-    return(0)
-  }
+#  if(is.na(q))
+#  {
+#    return(0)
+#  }
 
-  if(q >= 0 && q < 1)
-  {
-    return (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR)
-  } 
-  else if(q >= 1 && q < 2)
-  {
-    return (ch * (1/smoothingLength) * (-3*(2 - q)^2) * unitR)
-  }
-  else if(q >= 2)
-  {
-    return(0)
-  }
+#  if(q >= 0 && q < 1)
+#  {
+#    return (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR)
+#  } 
+#  else if(q >= 1 && q < 2)
+#  {
+#    return (ch * (1/smoothingLength) * (-3*(2 - q)^2) * unitR)
+#  }
+#  else if(q >= 2)
+#  {
+#    return(0)
+#  }
 }
 
 #sudocode implemtation
@@ -165,6 +167,7 @@ calculate_density <- function(x, m, h, rho, numParticles, dimensions)
 
 calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numParticles, dimensions)
 {
+  #RRprofStart(filename="GUIProfiling_Accel.txt")
   #"add damping and gravity"
   accel <- data.frame(xAccel=rep(0, numParticles),
                       yAccel=rep(0, numParticles)) 
@@ -188,12 +191,19 @@ calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numPar
       uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
       #"calculate acceleration due to pressure"
 
+      #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE, append = TRUE)
+      #RRprofStart(filename="GUIProfiling_Gradkernel.txt")
       p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
 
+      #Rprof(NULL)
       accel[i,] <- accel[i,] + p_a
       accel[j,] <- accel[j,] - p_a
+      #RRprofStop()
+      
     }
   }
+  
+  #RRprofStop()
   
   return(accel)
 }
@@ -213,7 +223,7 @@ main <- function(){
   presureConstant = 0.1
   PolyIndex = 1
   maxTimeSetps <- 250
-  profilingTimeSteps <- 10
+  profilingTimeSteps <- 100
   
   centers = data.frame(x = c(0, 2),
                        y = c(0, 0))
@@ -261,30 +271,37 @@ main <- function(){
   png(file = './OutputPlots/_Start.png')
   plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
   dev.off()
+
+  #Rprof("Profiling_GradKernel.txt", line.profiling = TRUE)
+  #print("Strating profiling")
+  #Rprof(NULL)
   
   print("Starting main loop")
   
+  print("Strating profiling")
   
- 
-  for(i in 1:maxTimeSetps)
+  RRprofStart(filename="GUIProfiling_SimpleGradKernel.txt")
+  #for(i in 1:maxTimeSetps)
+  for(i in 1:profilingTimeSteps)
   {
-	v_phalf = v_mhalf + (accel * timeStep)
-	x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
-	v = .5 * (v_mhalf + v_phalf)
-	v_mhalf = v_phalf
-
-	#"update densities, pressures, accelerations"
-	rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
-	P = presureConstant * rho^(1+1/PolyIndex)
-	#("Starting accel calc")
-	accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
-
-	png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
-	plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
-	dev.off()
+    v_phalf = v_mhalf + (accel * timeStep)
+    x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
+    v = .5 * (v_mhalf + v_phalf)
+    v_mhalf = v_phalf
   
-	print(paste("Done loop", i, "at",Sys.time(), sep=" "))
+    #"update densities, pressures, accelerations"
+    rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
+    P = presureConstant * rho^(1+1/PolyIndex)
+    accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
+    
+    png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
+    plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
+    dev.off()
+    
+    print(paste("Done loop", i, "at",Sys.time(), sep=" "))
   }
-
+  RRprofStop()
+  
   print(paste("Done at", Sys.time()))
+  RRprofReport(file.name = "GUIProfiling_SimpleGradKernel.txt", reportname="GUIProfiling_SimpleGradKernel.html")
 }
