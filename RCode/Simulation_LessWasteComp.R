@@ -60,6 +60,10 @@ initLambda <- function(lambda, numStars, starMass, starRadius, presureConstant, 
   
   for(i in 1:numStars)
   {
+    print(((2*presureConstant * (pi^(-1/PolyIndex))) *
+             ((starMass[i])*(1+PolyIndex)/((starRadius[i])^2))^(1+(1/PolyIndex)))/
+      starMass[i])
+    
     lambda <- c(lambda,
                 ((2*presureConstant * (pi^(-1/PolyIndex))) *
                    ((starMass[i])*(1+PolyIndex)/((starRadius[i])^2))^(1+(1/PolyIndex)))/
@@ -69,17 +73,37 @@ initLambda <- function(lambda, numStars, starMass, starRadius, presureConstant, 
   return(lambda)
 }
 
-#kernal functions
-kernel <- function(position, smoothingLength, dimensions)
+calcDistanceMatrix <- function(x, totalParticles, dimensions)
 {
-  ch <- switch(
-    dimensions,
-    1/(6* smoothingLength),
-    5/(14 * pi * smoothingLength^2),
-    1/(4 * pi * smoothingLength^3)
-  )
+  distVectorMatrix = array(dim=c(totalParticles, totalParticles, dimensions), rep(0,totalParticles *totalParticles* dimensions ))
   
-  q<-(sqrt(sum(position^2)))/smoothingLength
+  print(dim(distVectorMatrix))
+  for(i in 1:(totalParticles-1))
+  {
+    for(j in (i+1):totalParticles)
+    {
+      #print(distVectorMatrix[i, j, 1])
+      ix = x[i,2:(dimensions+1)]
+      jx= x[j,2:(dimensions+1)]
+      print(typeof(ix))
+      distVectorMatrix[i, j, 1:2 ] = as.vector(ix-jx)
+      #print(distVectorMatrix[i,j])
+    }
+  }
+  
+  return(distVectorMatrix)
+}
+
+#kernal functions
+kernel <- function(position, smoothingLength, ch)
+{
+ # ch <- switch(
+ #   dimensions,
+ #   1/(6* smoothingLength),
+ #   5/(14 * pi * smoothingLength^2),
+ #   1/(4 * pi * smoothingLength^3)
+ # )
+  q<-(sqrt(sum((position)^2)))/smoothingLength
   
   #Stops program if ch is null (ie not assigned by switch)
    stopifnot(!is.null(ch))
@@ -103,14 +127,14 @@ kernel <- function(position, smoothingLength, dimensions)
   }
 }
 
-gradKernel <- function(position, smoothingLength,dimensions)
+gradKernel <- function(position, smoothingLength,ch)
 {
-  ch <- switch(
-    dimensions,
-    1/(6* smoothingLength),
-    5/(14 * pi * smoothingLength^2),
-    1/(4 * pi * smoothingLength^3)
-  )
+ #ch <- switch(
+ #   dimensions,
+ #   1/(6* smoothingLength),
+ ##   5/(14 * pi * smoothingLength^2),
+ #   1/(4 * pi * smoothingLength^3)
+ # )
   
   unitR <- position / (sqrt(sum(position^2)))
   q<-(sqrt(sum(position^2)))/smoothingLength
@@ -142,17 +166,20 @@ gradKernel <- function(position, smoothingLength,dimensions)
 }
 
 #sudocode implemtation
-calculate_density <- function(x, m, h, rho, numParticles, dimensions)
+calculate_density <- function(x, m, h, rho, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
 {
-  for(i in 1:(numParticles-1)){
+  for(i in 1:(totalParticles-1)){
     #"initialize density with i = j contribution"
     rho[i, 1] <- m[i, 2] * kernel(0, h, dimensions)
     
-    for(j in (i+1):numParticles)
+    for(j in (i+1):totalParticles)
     {
       #"calculate vector between two particles"
       uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
-      rho_ij = m[i, 2] * kernel(uij, h, dimensions)
+      
+      #uij = distVectorMatrix[i, j, ]
+      print(uij)
+      rho_ij = m[i, 2] * kernel(uij, h, ch)
       
       #"add contribution to density"
       rho[i, 1] <- rho[i, 1] + rho_ij 
@@ -163,39 +190,47 @@ calculate_density <- function(x, m, h, rho, numParticles, dimensions)
   return (rho)
 }
 
-calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numParticles, dimensions)
+calculate_Acceleration <- function(x, v, m, rho, P, nu, lambda, h, accel, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
 {
   #"add damping and gravity"
-  accel <- data.frame(xAccel=rep(0, numParticles),
-                      yAccel=rep(0, numParticles)) 
+  accel <- data.frame(xAccel=rep(0, totalParticles),
+                      yAccel=rep(0, totalParticles)) 
   if(dimensions == 3)
   {
-    accel$zAccel <- rep(0, numParticles)
+    accel$zAccel <- rep(0, totalParticles)
   }
+
+  #will need to make this into a looped statment to be cleaner
+  accel[c(1:numParticles[1]), 1:dimensions] <- -nu * v[c(1:numParticles[1]), 1:dimensions] - lambda[1]* x[c(1:numParticles[1]), 1:dimensions]
   
-  for(i in 1:numParticles)
-  {
-    accel[i, 1:dimensions] <-  -nu * v[i, 1:dimensions] - lambda[x[i, 1]] * x[i, 2:(dimensions+1)]
-  }
+  accel[c((numParticles[1] + 1): numParticles[2]), 1:dimensions] <- -nu * v[c((numParticles[1] + 1): numParticles[2]), 1:dimensions]
+                                                                  - lambda[2]* x[c((numParticles[1] + 1): numParticles[2]), 1:dimensions]
+  
+  
+  #not completly sure why it needs to be -1 but it ends up as a 101 row matrix and caues issues
+  #for(i in 1:numParticles)
+  #{
+  #  accel[i, 1:dimensions] <-  -nu * v[i, 1:dimensions] - lambda[x[i, 1]] * x[i, 2:(dimensions+1)]
+  #}
   
   #"add pressure"
-  for(i in 1:(numParticles-1))
+  for(i in 1:(totalParticles-1))
   {
-    for(j in (i+1):numParticles)
+    pOverRSquare = P[i, 1]/(rho[i, 1])^2
+    for(j in (i+1):totalParticles)
     {
       #"calculate vector between two particles"
       uij = x[i,2:(dimensions+1)] - x[j,2:(dimensions+1)]
+      #uij = distVectorMatrix[1, j]
       #"calculate acceleration due to pressure"
-      p_a = (-m[j, 2])*(P[i, 1]/(rho[i, 1])^2 + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, dimensions)
+      p_a = (-m[j, 2])*(pOverRSquare + P[j, 1]/(rho[j, 1])^2)*gradKernel(uij, h, ch)
 
-      #Rprof(NULL)
       accel[i,] <- accel[i,] + p_a
       accel[j,] <- accel[j,] - p_a
+      
     }
   }
-  
-  #RRprofStop()
-  
+
   return(accel)
 }
 
@@ -206,7 +241,7 @@ main <- function(){
   totalParticles = sum(numParticles)
   dimensions= 2
   numStars = 2
-  starMass = c(1.6, .4)
+  starMass = c(1.5, .5)
   starRadius = c(0.75,0.75)
   smoothingLength = .04/sqrt(totalParticles/1000) #orginal .04/sqrt(numParticles/1000)
   timeStep = .04
@@ -214,8 +249,15 @@ main <- function(){
   presureConstant = 0.1
   PolyIndex = 1
   maxTimeSetps <- 250
-  testingTimeSteps <- 150
-  profilingTimeSteps <- 10
+  profilingTimeSteps <- 100
+  
+  
+  ch = switch(
+    dimensions,
+    1/(6* smoothingLength),
+    5/(14 * pi * smoothingLength^2),
+    1/(4 * pi * smoothingLength^3)
+  )
   
   centers = data.frame(x = c(0, 2),
                        y = c(0, 0))
@@ -262,10 +304,11 @@ main <- function(){
   png(file = './OutputPlots/_Start.png')
   plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
   dev.off()
-  
+
   print("Starting main loop")
 
-  for(i in 1:testingTimeSteps)
+  #for(i in 1:maxTimeSetps)
+  for(i in 1:1)
   {
     v_phalf = v_mhalf + (accel * timeStep)
     x[c(2,3)] = x[c(2,3)] + v_phalf * timeStep
@@ -273,15 +316,23 @@ main <- function(){
     v_mhalf = v_phalf
   
     #"update densities, pressures, accelerations"
-    rho = calculate_density(x, m, smoothingLength, rho, totalParticles, dimensions)
-    P = presureConstant * rho^(1+1/PolyIndex)
-    accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, totalParticles, dimensions)
+    #distVectorMatrix = calcDistanceMatrix(x, 10, dimensions)
 
+    rho = calculate_density(x, m, smoothingLength, rho, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
+
+    print(rho)
+    print(rho^(1+1/PolyIndex))
+    
+        P = presureConstant * rho^(1+1/PolyIndex)
+    accel = calculate_Acceleration(x, v, m, rho, P, damping, lambda, smoothingLength, accel, numParticles, totalParticles, dimensions, ch, distVectorMatrix)
+    
     png(file = paste("./OutputPlots/After", i,"loops.png", sep = ""))
     plot(x$xPos, x$yPos, xlim = c(-1, 3), ylim = c(-2, 2))
     dev.off()
     
     print(paste("Done loop", i, "at",Sys.time(), sep=" "))
   }
+
   print(paste("Done at", Sys.time()))
+
 }
