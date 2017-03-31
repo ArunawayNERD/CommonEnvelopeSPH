@@ -243,7 +243,7 @@ function accel = calcAccel(x, v, mass, rho, P, nu, lambda, smoothingLength, numP
   #accel((numParticles(1) + 1):totalParticles,:) = -nu * v((numParticles(1) + 1):totalParticles,:); - lambda(2) * x((numParticles(1) + 1):totalParticles, 2:(dimensions+1));
 
    for i = 1:totalParticles
-    accel(i, :) += -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
+    accel(i, :) = accel(i, :) + -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
     #accel(i, :) = -nu * v(i,:) - lambda * x(i, 2:(dimensions+1)); 
   end
   
