@@ -1,27 +1,25 @@
-function SimulationMain
+function SimulationTesting
   graphics_toolkit('gnuplot')
   page_screen_output(0);
   page_output_immediately(1);
   
   numStars = 2;
-  numParticles = [10, 10];
-  totalParticles = sum(numParticles);
+  numParticles = [100, 100];
+  totalParticles = sum(numParticles(1:numStars));
   
-  centers = [0, 0; 2, 0];
-  starRadius = [.75, .75];
-  starMasses = [1.5, .5];
-  
+  centers = [-2, 0 ; 2, 0];
+  starRadius = [0.75, 0.75];
+  starMasses = [2,2];
   smoothingLength = 0.04/sqrt(totalParticles/1000);
   timeStep = 0.04;
-  damping = .1;
+  damping = 2;
   dimensions = 2;
-  
   presureConstant = 0.1;
   polyIndex = 1;
   
-  testingTimeSteps = 50;
+  testingTimeSteps = 250;
   
-  dataFile = "testFile.txt"
+  dataFile = "SavedData.txt"
   
   switch(dimensions)
     case 1
@@ -48,25 +46,25 @@ function SimulationMain
   %initilize the position, mass, and lambda matrices
   x = initPosition(numParticles, numStars, starRadius, dimensions, centers, false, dataFile);
   mass = initMass(numParticles, numStars, starMasses);
-  lambda = initLambda(numStars, starMasses, starRadius, presureConstant, polyIndex);
+  #lambda = initLambda(numStars, starMasses, starRadius, presureConstant, polyIndex)
+  lambda = ((2* presureConstant * (pi ^(-1/polyIndex))) * ((sum(starMasses(1:numStars))/totalParticles)* (1+polyIndex)/((0.04/sqrt(totalParticles/1000))^2)^(1+(1/polyIndex)))/(sum(starMasses(1:numStars))));
   
   #savePositions(x, dataFile)
   disp(strcat("Done initlizing particle positions at-", strftime ("%T %x", localtime (time()))))
  
   #outputFolder = strcat('.\OutputPlots-', strftime("%T %x", localtime (time())));
-  mkdir(strcat('OutputPlots-', datestr(now(), 30)));
-  outputFolder = strcat('OutputPlots-', datestr(now(), 30));
+  mkdir(strcat('OutputPlots\OutputPlots-', datestr(now(), 30)));
+  outputFolder = strcat('OutputPlots\OutputPlots-', datestr(now(), 30));
 
-  plot(x(:,2), x(:,3), '.k');
-  axis([-1, 3, -2, 2]);
+  plot(x(1:numParticles(1),2), x(1:numParticles(1),3), '.b',
+         x((numParticles(1)+1):numParticles(2)+numParticles(1),2), x((numParticles(1)+1):numParticles(2)+numParticles(1),3), '.r');
+  #axis([-55, 5050, -150, 150]);
+  #axis([-.025, .025, -.025, .025]);
+  axis([-3, 3, -3, 3]);
   print(strcat(outputFolder , '\0Start.png'))
   
   disp("Starting main loop")
   for i = 1:testingTimeSteps
-    disp(x)
-    disp(v)
-    disp(accel)    
-    
     vPHalf = vMHalf + (accel * timeStep);
     x(:, 2:(dimensions+1)) = x(:, 2:(dimensions+1)) + vPHalf * timeStep;
     v = 0.5 * (vMHalf+vPHalf);
@@ -75,20 +73,22 @@ function SimulationMain
     rho = calcDensity(x, mass, rho, smoothingLength,numParticles, totalParticles, dimensions, ch);
     P = presureConstant * (rho.^(1+1/polyIndex));
     accel = calcAccel(x, v, mass, rho, P, damping, lambda, smoothingLength, numParticles, totalParticles, dimensions, ch);
+
     
-    plot(x(:,2), x(:,3), '.k');
-    axis([-1, 3, -2, 2]);
+    plot(x(1:numParticles(1),2), x(1:numParticles(1),3), '.b',
+         x((numParticles(1)+1):numParticles(2)+numParticles(1),2), x((numParticles(1)+1):numParticles(2)+numParticles(1),3), '.r');
+    #axis([-55, 5050, -150, 150]);
+    #axis([-.025, .025, -.025, .025]);
+    axis([-3, 3, -3, 3]);
     print(strcat(outputFolder , '\AfterLoop', num2str(i), '.png'))
     
     disp(strcat("Done loop-", num2str(i), " at ", strftime(" %T %x", localtime (time())))) 
   end
-  
-  
 endfunction
 
 function x = initPosition(numParticles, numStars, starRadius, dimensions, centers, loadFile, fileString)
   
-  x = zeros(sum(numParticles), 1+dimensions);
+  x = zeros(sum(numParticles(1:numStars)), 1+dimensions);
   
   if(loadFile)
     x = dlmread(fileString,",");
@@ -224,63 +224,42 @@ endfunction
 function accel = calcAccel(x, v, mass, rho, P, nu, lambda, smoothingLength, numParticles, totalParticles, dimensions, ch)
   accel = zeros(totalParticles, dimensions);
   
-  %need to figure out how to loop this.
-  #accel(1:numParticles(1),:) = -nu * v(1:numParticles(1),:); - lambda(1) * x(1:numParticles(1), 2:(dimensions+1));
-  #accel((numParticles(1) + 1):totalParticles,:) = -nu * v((numParticles(1) + 1):totalParticles,:); - lambda(2) * x((numParticles(1) + 1):totalParticles, 2:(dimensions+1));
-
    for i = 1:totalParticles
-    accel(i, :) = -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
+    #accel(i, :) = accel(i, :) + -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
+    accel(i, :) = -nu * v(i,:) - lambda * x(i, 2:(dimensions+1)); 
   end
-  
-  #bigG = 6.674 * (10**-011);
-  #for i = 1:totalParticles
-  #   for j = (i+1):totalParticles
-  #     uij = x(i, 2:(dimensions+1)) - x(j, 2:(dimensions+1));
-  #     
-  #     #my gravity
-  #     forceOfGrav = ((bigG*mass(i, 2)*mass(j, 2)) / (norm(uij) * norm(uij)));
-  #            
-  # #    #sph paper grav
-       #forceOfGrav = (bigG*mass(i, 2)*mass(j, 2))*norm(uij); #* norm(uij));
-  #    
-  #     accel(i, :) = accel(i, :) + ((forceOfGrav/ mass(i, 2)) * ((uij)/ norm(uij)));
-  #     accel(j, :) = accel(j, :) - ((forceOfGrav/ mass(j, 2)) * ((uij)/ norm(uij)));
-  #   end
-  #end
-  
-  for i = 1:15
-    #disp(accel(i, :))
-  end
-  
-  for i = 1:totalParticles
-     pOverRSquare = P(i)/(rho(i))^2;
-     
-    for j = (i+1):totalParticles
-      uij = x(i, 2:(dimensions+1)) - x(j, 2:(dimensions+1));
-      %p_a = -mass(j, 2)*(pOverRSquare + P(j)/(rho(j))^2)*gradKernel(uij, smoothingLength, ch);
-      
-      gradKernelOut = 0;
-      posNorm = norm(uij);
-  
-      unitR = uij/posNorm;
-      q = posNorm/smoothingLength;
-      
-      if(q >= 0 && q < 1)
-        gradKernelOut = (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR);
+ 
+  if(true)
+    for i = 1:totalParticles
+       pOverRSquare = P(i)/(rho(i))^2;
+       
+       for j = (i+1):totalParticles
+        uij = x(i, 2:(dimensions+1)) - x(j, 2:(dimensions+1));
+        %p_a = -mass(j, 2)*(pOverRSquare + P(j)/(rho(j))^2)*gradKernel(uij, smoothingLength, ch);
         
-      elseif(q >= 1 && q < 2)
-        gradKernelOut = (ch * (1/smoothingLength) * (-3*(2-q)^2)* unitR);
-        
-      elseif (q >=2)
         gradKernelOut = 0;
-        
-      endif 
-     
-      p_a = -mass(j, 2)*(pOverRSquare + P(j)/(rho(j))^2)* gradKernelOut;
+        posNorm = norm(uij);
     
-      accel(i,:) = accel(i,:) + p_a;
-      accel(j,:) = accel(j,:) - p_a;
-    end 
+        unitR = uij/posNorm;
+        q = posNorm/smoothingLength;
+        
+        if(q >= 0 && q < 1)
+          gradKernelOut = (ch * (1/smoothingLength) * (-3*(2-q)^2 + 12*(1-q)^2) * unitR);
+          
+        elseif(q >= 1 && q < 2)
+          gradKernelOut = (ch * (1/smoothingLength) * (-3*(2-q)^2)* unitR);
+          
+        elseif (q >=2)
+          gradKernelOut = 0;
+          
+        endif 
+       
+        p_a = -mass(j, 2)*(pOverRSquare + P(j)/(rho(j))^2)* gradKernelOut;
+        #p_a = -(mass(j, 2)/(3*(10**26)))*(pOverRSquare + P(j)/(rho(j))^2)* gradKernelOut;
+        accel(i,:) = accel(i,:) + p_a;
+        accel(j,:) = accel(j,:) - p_a;
+      end 
+    end
   end    
 endfunction
 

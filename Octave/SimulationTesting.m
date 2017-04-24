@@ -4,25 +4,37 @@ function SimulationTesting
   page_output_immediately(1);
   
   numStars = 2;
-  numParticles = [50, 50];
+  numParticles = [100, 100];
   totalParticles = sum(numParticles(1:numStars));
   
-  centers = [5, 0; 0, 0];
-  starRadius = [1, 1];
+  centers = [-2, 0 ; 2, 0];
+  starRadius = [0.75, 0.75];
   #starRadius = [0.00464913034, 0.00464913034] #sun radius = 0.00464913034 AU 
   #starMasses = [1.989*(10**12), 1.989*(10**12)];
-  starMasses = [5,5];
+  starMasses = [2,2];
   smoothingLength = 0.04/sqrt(totalParticles/1000);
   timeStep = 0.04;
   damping = 2;
   dimensions = 2;
   
+  #numStars = 2;
+  #numParticles = [100, 50];
+  #totalParticles = sum(numParticles(1:numStars));
+  
+  #centers = [-.75, -.75; 1.25, 1.26];
+  #starRadius = [0.75, 0.25];
+  #starMasses = [2,2];
+  #smoothingLength = 0.04/sqrt(totalParticles/1000);
+  #timeStep = 0.04;
+  #damping = 1;
+  #dimensions = 2;
+  
   presureConstant = 0.1;
   polyIndex = 1;
   
-  testingTimeSteps = 100;
+  testingTimeSteps = 250;
   
-  dataFile = "testFile.txt"
+  dataFile = "SavedData.txt"
   
   switch(dimensions)
     case 1
@@ -49,8 +61,8 @@ function SimulationTesting
   %initilize the position, mass, and lambda matrices
   x = initPosition(numParticles, numStars, starRadius, dimensions, centers, false, dataFile);
   mass = initMass(numParticles, numStars, starMasses);
-  lambda = initLambda(numStars, starMasses, starRadius, presureConstant, polyIndex)
-  #lambda = ((2* presureConstant * (pi ^(-1/polyIndex))) * ((sum(starMasses(1:numStars)))* (1+polyIndex)/((0.04/sqrt(totalParticles/1000))^2)^(1+(1/polyIndex)))/sum(starMasses(1:numStars)));
+  #lambda = initLambda(numStars, starMasses, starRadius, presureConstant, polyIndex)
+  lambda = ((2* presureConstant * (pi ^(-1/polyIndex))) * ((sum(starMasses(1:numStars))/totalParticles)* (1+polyIndex)/((0.04/sqrt(totalParticles/1000))^2)^(1+(1/polyIndex)))/(sum(starMasses(1:numStars))));
   
   #savePositions(x, dataFile)
   disp(strcat("Done initlizing particle positions at-", strftime ("%T %x", localtime (time()))))
@@ -63,7 +75,7 @@ function SimulationTesting
          x((numParticles(1)+1):numParticles(2)+numParticles(1),2), x((numParticles(1)+1):numParticles(2)+numParticles(1),3), '.r');
   #axis([-55, 5050, -150, 150]);
   #axis([-.025, .025, -.025, .025]);
-  axis([-2, 7, -5, 5]);
+  axis([-3, 3, -3, 3]);
   print(strcat(outputFolder , '\0Start.png'))
   
   disp("Starting main loop")
@@ -86,7 +98,7 @@ function SimulationTesting
          x((numParticles(1)+1):numParticles(2)+numParticles(1),2), x((numParticles(1)+1):numParticles(2)+numParticles(1),3), '.r');
     #axis([-55, 5050, -150, 150]);
     #axis([-.025, .025, -.025, .025]);
-    axis([-2, 7, -5, 5]);
+    axis([-3, 3, -3, 3]);
     print(strcat(outputFolder , '\AfterLoop', num2str(i), '.png'))
     
     disp(strcat("Done loop-", num2str(i), " at ", strftime(" %T %x", localtime (time())))) 
@@ -243,8 +255,8 @@ function accel = calcAccel(x, v, mass, rho, P, nu, lambda, smoothingLength, numP
   #accel((numParticles(1) + 1):totalParticles,:) = -nu * v((numParticles(1) + 1):totalParticles,:); - lambda(2) * x((numParticles(1) + 1):totalParticles, 2:(dimensions+1));
 
    for i = 1:totalParticles
-    accel(i, :) = accel(i, :) + -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
-    #accel(i, :) = -nu * v(i,:) - lambda * x(i, 2:(dimensions+1)); 
+    #accel(i, :) = accel(i, :) + -nu * v(i,:) - lambda(x(i,1)) * x(i, 2:(dimensions+1)); 
+    accel(i, :) = -nu * v(i,:) - lambda * x(i, 2:(dimensions+1)); 
   end
   
   #bigG = 6.674 * (10**-011);
